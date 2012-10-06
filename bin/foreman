@@ -1,3 +1,18 @@
 #!/usr/bin/env ruby
 
 require "foreman"
+
+server = Foreman::Server.new
+
+%w(INT TERM).each do |signal|
+  trap(signal) do
+    server.logger.info "SIG#{signal} received, stopping server..."
+    EventMachine.stop
+  end
+end
+
+EventMachine.run do
+  server.start
+end
+
+system "stty echo"

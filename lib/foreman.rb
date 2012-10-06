@@ -1,5 +1,7 @@
-require "foreman/version"
+require "eventmachine"
+require "eventmachine/popen3"
+require "logger"
 
-module Foreman
-  # Your code goes here...
-end
+require "foreman/minecraft_server_process"
+require "foreman/version"
+require "foreman/server"
