@@ -9,7 +9,7 @@ end
 
 %w(INT TERM).each do |signal|
   trap(signal) do
-    server.logger.info "SIG#{signal} received, stopping server..."
+    server.logger.info "SIG#{signal} received, stopping server...", fields: { signal: signal }
     server.stop do
       EventMachine.stop
     end
