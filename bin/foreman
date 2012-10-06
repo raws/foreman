@@ -7,7 +7,9 @@ server = Foreman::Server.new
 %w(INT TERM).each do |signal|
   trap(signal) do
     server.logger.info "SIG#{signal} received, stopping server..."
-    EventMachine.stop
+    server.stop do
+      EventMachine.stop
+    end
   end
 end
 
