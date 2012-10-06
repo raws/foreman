@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "foreman"
   gem.require_paths = ["lib"]
   gem.version       = Foreman::VERSION
+
+  gem.add_dependency "eventmachine", "~> 1.0.0"
 end
