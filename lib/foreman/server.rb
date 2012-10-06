@@ -1,10 +1,10 @@
 module Foreman
   class Server
-    attr_reader :logger, :process
+    attr_reader :logger, :process, :uuid
 
     def initialize
-      @logger = Logger.new(STDOUT)
-      @logger.level = Logger::INFO
+      @logger = Logging::Multiplexer.new(self)
+      @uuid = UUID.new
     end
 
     def start

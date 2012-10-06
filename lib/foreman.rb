@@ -1,7 +1,10 @@
 require "eventmachine"
 require "eventmachine/popen3"
 require "logger"
+require "uuid"
 
+require "foreman/logging/multiplexer"
+require "foreman/logging/stdout_adapter"
 require "foreman/minecraft_server_process"
 require "foreman/version"
 require "foreman/server"

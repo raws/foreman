@@ -3,6 +3,9 @@
 require "foreman"
 
 server = Foreman::Server.new
+server.logger.subscribe(Foreman::Logging::StdoutAdapter.new) do |adapter|
+  adapter.level = Logger::INFO
+end
 
 %w(INT TERM).each do |signal|
   trap(signal) do
