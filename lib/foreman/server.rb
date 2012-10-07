@@ -10,7 +10,8 @@ module Foreman
     end
 
     def start
-      @process = EventMachine.popen3 "/usr/local/bin/java7 -Xms4G -Xmx4G -jar Tekkit.jar", MinecraftServerProcess, self
+      logger.debug "Starting Minecraft server...", fields: { command: command }
+      @process = EventMachine.popen3 command, MinecraftServerProcess, self
       get_notified_when_process_unbinds
     end
 
@@ -31,6 +32,10 @@ module Foreman
     end
 
     private
+
+    def command
+      "/usr/local/bin/java7 -Xms4G -Xmx4G -jar Tekkit.jar"
+    end
 
     def get_notified_when_process_unbinds
       process.unbind do |exit_status, expected|
