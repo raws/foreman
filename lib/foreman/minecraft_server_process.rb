@@ -28,7 +28,8 @@ module Foreman
       send "stop"
     end
 
-    def unbind
+    def unbind(&block)
+      return @unbound.callback(&block) if block_given?
       exit_status = get_status.exitstatus
       if exit_status == "0"
         foreman.logger.info "Minecraft server stopped"
