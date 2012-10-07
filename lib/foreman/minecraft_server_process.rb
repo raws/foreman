@@ -48,7 +48,7 @@ module Foreman
     end
 
     def strip_timestamp_from_line(line)
-      line.sub /\A\s*[\d:]+\s*/, ""
+      line.sub /\A\s*(?:\d+:\d+\s*)+(?::\d+)?\s*/, ""
     end
   end
 end
