@@ -11,10 +11,11 @@ module Foreman
     def receive_data(data)
       data.each_line do |line|
         line.strip!
-        foreman.logger.debug line, direction: :in
 
         if received_line_is_useful?(line)
           foreman.logger.info line, direction: :in
+        else
+          foreman.logger.debug line, direction: :in
         end
       end
     end
