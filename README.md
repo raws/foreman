@@ -4,7 +4,9 @@ Foreman is a Minecraft server wrapper.
 
 ## Logging
 
-Subscribe _logging adapters_ to a `Foreman::Server` to do things with log messages, such as write them to the standard output stream, a file, or a remote logging service. A logging adapter is any object which responds to `log(level, uuid, time, message, options)`:
+Foreman's logging mechanism allows you to send Minecraft server log messages to any number of destinations. For instance, you might want to log informative messages such as player joins to a local file, and send debug messages, warnings and errors to [Splunk](http://splunk.com/) for later analysis.
+
+Subscribe _logging adapters_ to a Foreman server to do things with log messages, such as write them to the standard output stream, a file, or a remote logging service. A logging adapter is any object which responds to `log(level, uuid, time, message, options)`:
 
 * `level` -- One of `Foreman::Logging::LEVELS` (`:debug`, `:info`, `:warn`, `:error`, `:fatal`).
 * `uuid` -- A unique identifier string for the log message. Useful for identifying the message across different logging systems.
@@ -28,7 +30,7 @@ server.logger.subscribe Foreman::Logging::StdoutAdapter.new do |adapter|
 end
 ```
 
-If the logging adapter responds to `subscribed(multiplexer)`, the multiplexer will call that method, passing itself as an argument, after the adapter is subscribed. Adapters can use this to access the logging multiplexer and the Foreman server:
+If the logging adapter responds to `subscribed(multiplexer)`, the server's logging multiplexer will call that method, passing itself as an argument, after the adapter is subscribed. Adapters can use this to access the multiplexer and, therefore, the Foreman server:
 
 ```ruby
 class SimpleLoggingAdapter
@@ -37,7 +39,7 @@ class SimpleLoggingAdapter
   end
 
   def subscribed(multiplexer)
-    @multiplexer = multiplexer # => #<Foreman::Server:0x007fdf72197338 ...>
+    multiplexer.foreman # => #<Foreman::Server:0x007fdf72197338 ...>
   end
 end
 ```
