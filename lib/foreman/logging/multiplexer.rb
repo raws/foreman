@@ -1,7 +1,5 @@
 module Foreman
   module Logging
-    LEVELS = [:debug, :info, :warn, :error, :fatal]
-
     class Multiplexer
       attr_reader :adapters, :foreman
 

@@ -14,7 +14,9 @@ module Foreman
 
         if received_line_is_useful?(line)
           line = strip_timestamp_from_line(line)
-          foreman.logger.info line, direction: :in
+          line, level = Logging.extract_log_level(line)
+          level ||= :info
+          foreman.logger.log level, line, direction: :in
         else
           foreman.logger.debug line, direction: :in
         end
