@@ -5,14 +5,17 @@ module Foreman
     def initialize(foreman)
       @foreman = foreman
       @unbound = EventMachine::DefaultDeferrable.new
+      @unbind_expected = false
     end
 
-    def receive_data(line)
-      line.strip!
-      foreman.logger.debug line, direction: :in
+    def receive_data(data)
+      data.each_line do |line|
+        line.strip!
+        foreman.logger.debug line, direction: :in
 
-      if received_data_is_interesting?(line)
-        foreman.logger.info line, direction: :in
+        if received_line_is_useful?(line)
+          foreman.logger.info line, direction: :in
+        end
       end
     end
     alias :receive_stderr :receive_data
@@ -25,24 +28,19 @@ module Foreman
 
     def stop(&block)
       @unbound.callback(&block) if block_given?
+      @unbind_expected = true
       send "stop"
     end
 
     def unbind(&block)
       return @unbound.callback(&block) if block_given?
-      exit_status = get_status.exitstatus
-      if exit_status == "0"
-        foreman.logger.info "Minecraft server stopped"
-      else
-        foreman.logger.warn "Minecraft server stopped with exit status #{exit_status}",
-          fields: { exit_status: exit_status }
-      end
-      @unbound.succeed(exit_status)
+      @unbound.succeed(get_status.exitstatus, @unbind_expected)
+      sleep 12
     end
 
     private
 
-    def received_data_is_interesting?(line)
+    def received_line_is_useful?(line)
       line !~ /\A(?:[\s>]*|.{,1})\Z/
     end
   end
