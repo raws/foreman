@@ -11,17 +11,19 @@ module Foreman
 
     def start
       @process = EventMachine.popen3 "/usr/local/bin/java7 -Xms4G -Xmx4G -jar Tekkit.jar", MinecraftServerProcess, self
-      subscribe_to_process_unbound_event
+      get_notified_when_process_unbinds
     end
 
     def stop(&block)
       process.stop(&block)
+      exit_after_timeout
     end
 
     def stopped(exit_status, expected)
+      @process = nil
       if expected
         logger.info "Minecraft server stopped", fields: { exit_status: exit_status }
-        stop_when_all_deferrables_are_complete_or_after_timeout
+        exit_after_all_deferrables_are_complete
       else
         logger.warn "Minecraft server stopped unexpectedly. Restarting...",
           fields: { exit_status: exit_status }
@@ -30,25 +32,26 @@ module Foreman
 
     private
 
-    def subscribe_to_process_unbound_event
+    def get_notified_when_process_unbinds
       process.unbind do |exit_status, expected|
         stopped exit_status, expected
       end
     end
 
-    def stop_when_all_deferrables_are_complete
+    def exit_after_all_deferrables_are_complete
       if EventMachine.defers_finished?
         EventMachine.stop
       else
         EventMachine.next_tick do
-          stop_when_all_deferrables_are_complete
+          exit_after_all_deferrables_are_complete
         end
       end
     end
 
-    def stop_when_all_deferrables_are_complete_or_after_timeout
-      EventMachine.add_timer(SHUTDOWN_TIMEOUT) { EventMachine.stop }
-      stop_when_all_deferrables_are_complete
+    def exit_after_timeout
+      EventMachine.add_timer(SHUTDOWN_TIMEOUT) do
+        EventMachine.stop
+      end
     end
   end
 end

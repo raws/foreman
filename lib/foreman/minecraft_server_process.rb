@@ -35,7 +35,6 @@ module Foreman
     def unbind(&block)
       return @unbound.callback(&block) if block_given?
       @unbound.succeed(get_status.exitstatus, @unbind_expected)
-      sleep 12
     end
 
     private
