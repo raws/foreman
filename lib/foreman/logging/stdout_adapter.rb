@@ -1,7 +1,7 @@
 module Foreman
   module Logging
     class StdoutAdapter
-      attr_reader :multiplexer
+      attr_reader :logger, :multiplexer
 
       def initialize
         @logger = ::Logger.new(STDOUT)
