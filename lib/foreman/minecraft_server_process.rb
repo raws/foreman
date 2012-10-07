@@ -13,6 +13,7 @@ module Foreman
         line.strip!
 
         if received_line_is_useful?(line)
+          line = strip_timestamp_from_line(line)
           foreman.logger.info line, direction: :in
         else
           foreman.logger.debug line, direction: :in
@@ -42,6 +43,10 @@ module Foreman
 
     def received_line_is_useful?(line)
       line !~ /\A(?:[\s>]*|.{,1})\Z/
+    end
+
+    def strip_timestamp_from_line(line)
+      line.sub /\A\s*[\d:]+\s*/, ""
     end
   end
 end
