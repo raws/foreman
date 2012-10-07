@@ -28,6 +28,7 @@ module Foreman
       else
         logger.warn "Minecraft server stopped unexpectedly. Restarting...",
           fields: { exit_status: exit_status }
+        start
       end
     end
 
