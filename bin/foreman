@@ -8,7 +8,7 @@ server.logger.subscribe(Foreman::Logging::StdoutAdapter.new) do |adapter|
 end
 
 server.watch "for server startup" do |msg, id|
-  if msg =~ /done/i
+  if msg.system? && msg =~ /done/i
     server.logger.info "Minecraft server started"
   end
 end

@@ -5,6 +5,7 @@ require "uuid"
 
 require "foreman/channel"
 require "foreman/logging"
+require "foreman/message"
 require "foreman/minecraft_server_process"
 require "foreman/version"
 require "foreman/server"

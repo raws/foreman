@@ -12,12 +12,10 @@ module Foreman
       data.each_line do |line|
         line.strip!
 
-        if received_line_is_useful?(line)
-          line = strip_timestamp_from_line(line)
-          line, level = Logging.extract_log_level(line)
-          level ||= :info
-          foreman.logger.log level, line, direction: :in
-          foreman.messages.push line
+        if Message.useful?(line)
+          message = Message.new(line)
+          foreman.logger.log(message.log_level || :info, line, direction: :in)
+          foreman.messages.push message
         else
           foreman.logger.debug line, direction: :in
         end
@@ -40,16 +38,6 @@ module Foreman
     def unbind(&block)
       return @unbound.callback(&block) if block_given?
       @unbound.succeed(get_status.exitstatus, @unbind_expected)
-    end
-
-    private
-
-    def received_line_is_useful?(line)
-      line !~ /\A(?:[\s>]*|.{,1})\Z/
-    end
-
-    def strip_timestamp_from_line(line)
-      line.sub /\A\s*(?:\d+:\d+\s*)+(?::\d+)?\s*/, ""
     end
   end
 end
