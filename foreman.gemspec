@@ -16,5 +16,6 @@ Gem::Specification.new do |gem|
   gem.version       = Foreman::VERSION
 
   gem.add_dependency "eventmachine", "~> 1.0.0"
+  gem.add_dependency "thor", "~> 0.16.0"
   gem.add_dependency "uuid", "~> 2.3.5"
 end
