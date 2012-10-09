@@ -7,6 +7,12 @@ server.logger.subscribe(Foreman::Logging::StdoutAdapter.new) do |adapter|
   adapter.level = Logger::INFO
 end
 
+server.watch "for server startup" do |msg, id|
+  if msg =~ /done/i
+    server.logger.info "Minecraft server started"
+  end
+end
+
 %w(INT TERM).each do |signal|
   trap(signal) do
     server.logger.info "SIG#{signal} received, stopping server...", fields: { signal: signal }

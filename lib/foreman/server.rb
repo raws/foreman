@@ -2,10 +2,11 @@ module Foreman
   class Server
     SHUTDOWN_TIMEOUT = 10
 
-    attr_reader :logger, :process, :uuid
+    attr_reader :logger, :messages, :process, :uuid
 
     def initialize
       @logger = Logging::Multiplexer.new(self)
+      @messages = Channel.new
       @uuid = UUID.new
     end
 
@@ -30,6 +31,14 @@ module Foreman
           fields: { exit_status: exit_status }
         start
       end
+    end
+
+    def watch(description = nil, &block)
+      messages.subscribe block
+    end
+
+    def unwatch(subscription_id)
+      messages.unsubscribe subscription_id
     end
 
     private

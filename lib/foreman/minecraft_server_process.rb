@@ -17,6 +17,7 @@ module Foreman
           line, level = Logging.extract_log_level(line)
           level ||= :info
           foreman.logger.log level, line, direction: :in
+          foreman.messages.push line
         else
           foreman.logger.debug line, direction: :in
         end
