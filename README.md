@@ -43,3 +43,31 @@ class SimpleLoggingAdapter
   end
 end
 ```
+
+## Watchers
+
+To perform actions in response to server events, Foreman exposes a simple pub-sub interface. To subscribe to the log message feed, call `Foreman::Server#watch` with a human-readable description of what you're watching for and a block, which is passed a `Foreman::Message`, a subscription ID and the `Foreman::Channel` which is distributing the messages.
+
+For example, to log a message when the server is done starting, we'd look for messages like `Done (1.579s)! For help, type "help" or "?"` like this:
+
+```ruby
+server = Foreman::Server.new
+server.watch "for server startup" do |msg|
+  if msg.system? && msg =~ /done/i
+    server.logger.info "Minecraft server started"
+  end
+end
+```
+
+Watchers can also unsubscribe themselves from the pub-sub interface:
+
+```ruby
+server = Foreman::Server.new
+server.watch "for player join" do |msg, id|
+  if msg.system? && msg =~ /(\S+) joined/
+    username = $~[1]
+    server.logger.info "#{username} joined the server"
+    foreman.unwatch(id)
+  end
+end
+```
