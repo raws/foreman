@@ -14,7 +14,7 @@ module Foreman
 
         if Message.useful?(line)
           message = Message.new(line)
-          foreman.logger.log(message.log_level || :info, line, direction: :in)
+          foreman.logger.log(message.log_level || :info, message, direction: :in)
           foreman.messages.push message
         else
           foreman.logger.debug line, direction: :in

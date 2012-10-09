@@ -28,10 +28,10 @@ module Foreman
     private
 
     def parse!
-      parsed = strip_timestamp(original)
-      @parsed, @log_level = Logging.extract_log_level(parsed)
+      @parsed = strip_timestamp(original)
+      @parsed, @log_level = Logging.extract_log_level(@parsed)
 
-      if parsed =~ /<([^>]+)>\s*(.*)$/
+      if @parsed =~ /<([^>]+)>\s*(.*)$/
         @type = :chat
         @from, @parsed = $~[1], $~[2]
       else
