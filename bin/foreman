@@ -4,7 +4,8 @@ require "foreman"
 require "thor"
 
 class ForemanCLI < Thor
-  desc "start", "Start a Foreman server"
+  desc "start [--config PATH]", "Start a Foreman server"
+  option :config, aliases: ["-c"], banner: "PATH", desc: "Path to a Ruby configuration file"
   def start
     @server = Foreman::Server.new
     @server.logger.subscribe Foreman::Logging::StdoutAdapter.new do |adapter|
@@ -15,6 +16,17 @@ class ForemanCLI < Thor
       trap(signal) do
         @server.logger.info "SIG#{signal} received, stopping server...", fields: { signal: signal }
         @server.stop
+      end
+    end
+
+    if options[:config]
+      config_path = File.expand_path(options[:config])
+      open(config_path) do |io|
+        line_number = 1
+        io.each_line do |line|
+          eval line, binding, config_path, line_number
+          line_number += 1
+        end
       end
     end
 
