@@ -4,22 +4,22 @@ Foreman is a Minecraft server wrapper. Tell it how to start your Minecraft serve
 
 ## Usage
 
-`foreman start COMMAND` will start a Foreman server by executing the specified Java command. For example, to start a vanilla Minecraft server, you might use:
+`minecraft-foreman start COMMAND` will start a Foreman server by executing the specified Java command. For example, to start a vanilla Minecraft server, you might use:
 
 ```bash
-foreman start "java -Xms4G -Xmx4G -Xincgc -jar minecraft_server.jar nogui"
+minecraft-foreman start "java -Xms4G -Xmx4G -Xincgc -jar minecraft_server.jar nogui"
 ```
 
 Or a Tekkit server:
 
 ```bash
-foreman start "java -Xms4G -Xmx6G -Xincgc -jar Tekkit.jar"
+minecraft-foreman start "java -Xms4G -Xmx6G -Xincgc -jar Tekkit.jar"
 ```
 
 You may also specify a Ruby configuration file to be evaluated in the context of the new server before starts up:
 
 ```bash
-foreman start --config init.rb "java -Xms4G -Xmx4G -Xincgc -jar minecraft_server.jar nogui"
+minecraft-foreman start --config init.rb "java -Xms4G -Xmx4G -Xincgc -jar minecraft_server.jar nogui"
 ```
 
 The configuration file has access to the `@server` variable, which is an instance of `Foreman::Server`. You can use it to set up logging adapters, watchers, and otherwise customize server behavior to your whim. An example configuration file might look like this:
