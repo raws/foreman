@@ -12,20 +12,14 @@ class ForemanCLI < Thor
       adapter.level = Logger::INFO
     end
 
-    %w(INT TERM).each do |signal|
-      trap(signal) do
-        @server.logger.info "SIG#{signal} received, stopping server...", fields: { signal: signal }
-        @server.stop
-      end
-    end
-
+    trap_termination_signals
     load_config
 
     EventMachine.run do
       @server.start
     end
 
-    system "stty echo"
+    restore_terminal_keyboard_output
   end
 
   private
@@ -39,6 +33,19 @@ class ForemanCLI < Thor
           eval line, binding, config_path, line_number
           line_number += 1
         end
+      end
+    end
+  end
+
+  def restore_terminal_keyboard_output
+    system "stty echo"
+  end
+
+  def trap_termination_signals
+    %w(INT TERM).each do |signal|
+      trap(signal) do
+        @server.logger.info "SIG#{signal} received, stopping server...", fields: { signal: signal }
+        @server.stop
       end
     end
   end
