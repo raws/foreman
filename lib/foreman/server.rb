@@ -2,9 +2,10 @@ module Foreman
   class Server
     SHUTDOWN_TIMEOUT = 10
 
-    attr_reader :logger, :messages, :process, :uuid
+    attr_reader :command, :logger, :messages, :process, :uuid
 
-    def initialize
+    def initialize(command)
+      @command = command
       @logger = Logging::Multiplexer.new(self)
       @messages = Channel.new
       @uuid = UUID.new
@@ -42,10 +43,6 @@ module Foreman
     end
 
     private
-
-    def command
-      "/usr/local/bin/java7 -Xms4G -Xmx4G -jar Tekkit.jar"
-    end
 
     def get_notified_when_process_unbinds
       process.unbind do |exit_status, expected|

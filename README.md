@@ -2,6 +2,41 @@
 
 Foreman is a Minecraft server wrapper.
 
+## Usage
+
+`foreman start COMMAND` will start a Foreman server by executing the specified Java command. For example, to start a vanilla Minecraft server, you might use:
+
+```bash
+foreman start "java -Xms4G -Xmx4G -Xincgc -jar minecraft_server.jar nogui"
+```
+
+Or a Tekkit server:
+
+```bash
+foreman start "java -Xms4G -Xmx6G -Xincgc -jar Tekkit.jar"
+```
+
+You may also specify a Ruby configuration file to be evaluated in the context of the new server before starts up:
+
+```bash
+foreman start --config init.rb "java -Xms4G -Xmx4G -Xincgc -jar minecraft_server.jar nogui"
+```
+
+The configuration file has access to the `@server` variable, which is an instance of `Foreman::Server`. You can use it to set up logging adapters, watchers, and otherwise customize server behavior to your whim. An example configuration file might look like this:
+
+```ruby
+@server.logger.subscribe Foreman::Logging::FileAdapter.new("server.log") do |adapter|
+  adapter.level = Logger::INFO
+end
+
+@server.watch "for player join" do |msg|
+  if msg.system? && msg =~ /(\S+) joined/
+    username = $~[1]
+    server.logger.info "#{username} joined the server"
+  end
+end
+```
+
 ## Logging
 
 Foreman's logging mechanism allows you to send Minecraft server log messages to any number of destinations. For instance, you might want to log informative messages such as player joins to a local file, and send debug messages, warnings and errors to [Splunk](http://splunk.com/) for later analysis.

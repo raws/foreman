@@ -4,10 +4,25 @@ require "foreman"
 require "thor"
 
 class ForemanCLI < Thor
-  desc "start [--config PATH]", "Start a Foreman server"
+  desc "start [--config PATH] COMMAND", "Start a Foreman server"
   option :config, aliases: ["-c"], banner: "PATH", desc: "Path to a Ruby configuration file"
-  def start
-    @server = Foreman::Server.new
+  long_desc <<-LONGDESC
+    `foreman start COMMAND` will start a Foreman server by executing the specified Java command. For
+    example, to start a vanilla Minecraft server, you might use:
+
+    $ foreman start "java -Xms4G -Xmx4G -Xincgc -jar minecraft_server.jar nogui"
+
+    You may also specify a Ruby configuration file to be evaluated in the context of the new server
+    before it starts up:
+
+    $ foreman start --config init.rb "java -Xms4G -Xmx4G -Xincgc -jar minecraft_server.jar nogui"
+
+    The configuration file has access to the @server variable, which is an instance of
+    Foreman::Server. You can use it to set up logging adapters, watchers, and otherwise customize
+    server behavior to your whim.
+  LONGDESC
+  def start(command)
+    @server = Foreman::Server.new(command)
     @server.logger.subscribe Foreman::Logging::StdoutAdapter.new do |adapter|
       adapter.level = Logger::INFO
     end
