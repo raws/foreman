@@ -24,4 +24,6 @@ module Foreman
 end
 
 require "foreman/logging/multiplexer"
+require "foreman/logging/std_lib_logger_adapter"
+require "foreman/logging/file_adapter"
 require "foreman/logging/stdout_adapter"

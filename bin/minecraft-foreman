@@ -43,11 +43,7 @@ class ForemanCLI < Thor
     if options[:config]
       config_path = File.expand_path(options[:config])
       open(config_path) do |io|
-        line_number = 1
-        io.each_line do |line|
-          eval line, binding, config_path, line_number
-          line_number += 1
-        end
+        eval io.read, binding, config_path
       end
     end
   end
