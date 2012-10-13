@@ -25,6 +25,13 @@ module Foreman
       end
     end
 
+    # Return true if the given line is deemed interesting, and not buffer gibberish. This method
+    # filters out lines which are empty, input lines which begin with ">", and lines containing only
+    # a single character.
+    def self.useful?(line)
+      line !~ /^\s*$|^[\s>]+|^.{,1}$/
+    end
+
     private
 
     def parse!
@@ -41,10 +48,6 @@ module Foreman
 
     def strip_timestamp(line)
       line.sub /\A\s*(?:\d+:\d+\s*)+(?::\d+)?\s*/, ""
-    end
-
-    def self.useful?(line)
-      line !~ /\A(?:[\s>]*|.{,1})\Z/
     end
   end
 end
