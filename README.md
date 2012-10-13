@@ -1,6 +1,6 @@
 # Foreman
 
-Foreman is a Minecraft server wrapper.
+Foreman is a Minecraft server wrapper. Tell it how to start your Minecraft server, and it will restart the server process if it dies, send server logs to wherever you want, and run bits of Ruby in response to server events you're watching for.
 
 ## Usage
 
