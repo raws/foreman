@@ -19,6 +19,18 @@ class ForemanCLI < Thor
       end
     end
 
+    load_config
+
+    EventMachine.run do
+      @server.start
+    end
+
+    system "stty echo"
+  end
+
+  private
+
+  def load_config
     if options[:config]
       config_path = File.expand_path(options[:config])
       open(config_path) do |io|
@@ -29,12 +41,6 @@ class ForemanCLI < Thor
         end
       end
     end
-
-    EventMachine.run do
-      @server.start
-    end
-
-    system "stty echo"
   end
 end
 
