@@ -28,9 +28,9 @@ class ForemanCLI < Thor
     end
 
     trap_termination_signals
-    load_config
 
     EventMachine.run do
+      load_config
       @server.start
     end
 
