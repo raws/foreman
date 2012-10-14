@@ -1,11 +1,16 @@
 module Foreman
   module Logging
     class Multiplexer
-      attr_reader :adapters, :foreman
+      attr_reader :adapters, :filters, :foreman
 
       def initialize(foreman, adapters = [])
         @foreman = foreman
         @adapters = adapters
+        @filters = []
+      end
+
+      def filter(&block)
+        filters << block if block_given?
       end
 
       def subscribe(adapter)
@@ -18,18 +23,24 @@ module Foreman
         time = options.delete(:time) || Time.now
         uuid = foreman.uuid.generate
 
-        blocks = adapters.map do |adapter|
-          lambda do
-            adapter.log(level, uuid, time, message, options) if adapter.respond_to?(:log)
+        catch :stop do
+          filters.each do |filter|
+            filter.call(level, uuid, time, message, options)
           end
-        end
 
-        if EventMachine.reactor_running?
-          blocks.each do |block|
-            EventMachine.defer(&block)
+          blocks = adapters.map do |adapter|
+            lambda do
+              adapter.log(level, uuid, time, message, options) if adapter.respond_to?(:log)
+            end
           end
-        else
-          blocks.each(&:call)
+
+          if EventMachine.reactor_running?
+            blocks.each do |block|
+              EventMachine.defer(&block)
+            end
+          else
+            blocks.each(&:call)
+          end
         end
       end
 
